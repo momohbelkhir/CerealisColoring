@@ -1,0 +1,50 @@
+{
+  materials: [
+    {
+      name: 'Monkey_mat1',
+      parameters: [
+        {
+          baseColor: 'Monkey_BaseColor',
+        },
+        {
+          baseColorTint: [
+            1,
+            1,
+            1,
+            1,
+          ],
+        },
+        {
+          metallic: 0,
+        },
+        {
+          roughness: 1,
+        },
+        {
+          opacity: null,
+        },
+      ],
+      source: 'build/sceneform_sdk/default_materials/obj_material.sfm',
+    },
+  ],
+  model: {
+    attributes: [
+      'Position',
+      'TexCoord',
+      'Orientation',
+    ],
+    collision: {},
+    file: 'sampledata/Monkey.obj',
+    name: 'Monkey',
+    recenter: 'root',
+    scale: 0.050886700000000001,
+  },
+  samplers: [
+    {
+      file: 'sampledata\\Monkey_BaseColor.png',
+      name: 'Monkey_BaseColor',
+      pipeline_name: 'Monkey_BaseColor.png',
+    },
+  ],
+  version: '0.54:2',
+}
