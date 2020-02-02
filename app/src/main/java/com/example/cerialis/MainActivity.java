@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
+import android.media.CamcorderProfile;
 import android.net.Uri;
 
 import android.os.Environment;
@@ -47,7 +48,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
 
     private CustomArFragment arFragment;
     Button capture;
-
+    Button record;
+    VideoRecorder videoRecorder =null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         setContentView(R.layout.activity_main);
 
 
-       
+
         if(ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_DENIED){
             ActivityCompat.requestPermissions(this,
@@ -66,14 +68,47 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
         arFragment.getArSceneView().getScene().addOnUpdateListener(this);
 
         capture = (Button) findViewById(R.id.capture);
+        record = (Button) findViewById(R.id.record);
 
         capture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                  takePhoto();
+
             }
         });
 
+        record.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // takePhoto();
+                if(videoRecorder == null){
+                    videoRecorder = new VideoRecorder();
+                    videoRecorder.setSceneView(arFragment.getArSceneView());
+                    int orientation = getResources().getConfiguration().orientation;
+                    videoRecorder.setVideoQuality(CamcorderProfile.QUALITY_HIGH,orientation);
+
+                }
+                boolean isRecording = videoRecorder.onToggleRecord();
+                if(isRecording){
+                    toastShow("Start");
+                }else{
+                    toastShow("Finished");
+                }
+            }
+        });
+
+    }
+
+    private void toastShow(String state){
+
+        if(state.equals("Start")){
+             Toast.makeText(this,"Recording is started !", Toast.LENGTH_LONG).show();
+             record.setText("Stop");
+        } else if (state.equals("Finished")) {
+            Toast.makeText(this,"Recording is finished ! the video is saved on Pictures folder", Toast.LENGTH_LONG).show();
+            record.setText("Record");
+        }
     }
 
     private String generateFilename() {
@@ -122,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements Scene.OnUpdateLis
                     return;
                 }
                 Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content),
-                        "Photo saved", Snackbar.LENGTH_LONG);
-                snackbar.setAction("Open in Photos", v -> {
+                        "Photo saved in pictures", Snackbar.LENGTH_LONG);
+                snackbar.setAction("Open to share", v -> {
                     File photoFile = new File(filename);
 
                     Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
